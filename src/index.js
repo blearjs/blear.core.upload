@@ -32,16 +32,16 @@ var defaults = {
     fileEl: null,
 
     /**
-     * 提交按钮
-     * @type HTMLElement|String
+     * A Binary Large OBject
+     * @type Object
      */
-    submitEl: null,
+    blob: null,
 
     /**
      * 是否可以选择多个文件
      * @type boolean
      */
-    multiple: true,
+    multiple: false,
 
     /**
      * 是否跨域，默认false
@@ -59,11 +59,11 @@ var defaults = {
      * 文件提交路径 默认根路径
      * @type string
      */
-    action: '/',
+    url: '/',
 
     /**
      * 传输的数据
-     * 如果是iframe传输，会装变未input的name value
+     * 如果是 iframe 传输，会转变为 input 的name value
      * @type Object
      */
     body: null,
@@ -74,6 +74,11 @@ var defaults = {
      */
     fileName: 'file',
 
+    /**
+     * 数据格式
+     * @type String
+     */
+    dataType: 'json',
 
     /**
      * 上传进度
@@ -105,7 +110,6 @@ function Uploader(options) {
 
     options = the.options = object.assign(true, {}, defaults, options);
     the.fileEl = selector.query(options.fileEl)[0];
-    the.submitEl = selector.query(options.submitEl)[0];
     the.iframeName = namespace + iframeCount++;
     the.standard = 'FormData' in window && !options.iframe;
 
@@ -149,7 +153,7 @@ Uploader.prototype = {
             method: options.method,
             enctype: 'multipart/form-data',
             target: the.iframeName,
-            action: options.action
+            action: options.url
         });
 
         var body = options.body;
@@ -194,7 +198,7 @@ Uploader.prototype = {
             }
         });
 
-        var submitEl = modification.create('input', {
+        var submitEl = the.submitEl = modification.create('input', {
             type: 'submit'
         });
         attribute.hide(submitEl);
@@ -207,19 +211,24 @@ Uploader.prototype = {
      * ajax 上传
      */
     uploadAjax: function () {
-        var self = this;
-        var options = self.options;
-        var form = new FormData(self.form);
+        var the = this;
+        var options = the.options;
+        var form = new FormData(the.form);
+        var filename = the.fileEl.value.match(/[^\\\/]*$/)[0] || 'anonymous';
 
-        form.append(options.fileName, options.multiple ? self._files : self._files[0]);
+        form.append(options.fileName, options.blob ?
+                options.blob :
+                (options.multiple ? the._files : the._files[0]),
+            filename
+        );
 
         object.each(options.body, function (key, val) {
             form.append(key, val);
         });
 
         ajax({
-            url: options.action,
-            type: options.method,
+            url: options.url,
+            method: options.method,
             crossDomain: options.cross,
             body: form,
             dataType: options.dataType,
@@ -233,19 +242,15 @@ Uploader.prototype = {
     start: function () {
         var the = this;
 
-        event.on(the.fileEl, 'change', the.onChange = function (e) {
-            the._files = this.files || [{
-                    name: e.target.value
-                }];
-        });
+        the._files = the.fileEl.files || [{
+                name: e.target.value
+            }];
 
-        event.once(the.submitEl, 'click', function () {
-            if (the.standard) {
-                the.uploadAjax();
-            } else {
-                the.uploadForm();
-            }
-        });
+        if (the.standard) {
+            the.uploadAjax();
+        } else {
+            the.uploadForm();
+        }
     },
 
     /**
