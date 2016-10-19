@@ -203,7 +203,7 @@ Uploader.prototype = {
         });
         attribute.hide(submitEl);
         modification.insert(submitEl, the.formEl);
-        event.emit(submitEl, 'click');
+        submitEl.click();
     },
 
 
@@ -243,7 +243,7 @@ Uploader.prototype = {
         var the = this;
 
         the._files = the.fileEl.files || [{
-                name: e.target.value
+                name: the.fileEl.value
             }];
 
         if (the.standard) {

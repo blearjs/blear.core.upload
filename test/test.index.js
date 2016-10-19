@@ -33,7 +33,7 @@ describe('测试文件', function () {
             dataType: 'text',
             body: {name: 'zcl'},
             cross: true,
-            action: '/upload/ajax/',
+            url: '/upload/ajax/',
             onSuccess: function (data) {
                 expect(data).toEqual('success');
                 done();
@@ -60,7 +60,7 @@ describe('测试文件', function () {
             submitEl: send,
             fileName: 'test',
             body: {name: 'zcl'},
-            action: '/upload/iframe/',
+            url: '/upload/iframe/',
             onSuccess: function (data) {
                 expect(data.indexOf('success') > -1).toEqual(true);
                 done();
