@@ -1,7 +1,7 @@
 {
   "name": "blear.core.upload",
-  "version": "1.0.3",
-  "description": "HTML5/4 AJAX 上传",
+  "version": "1.0.4",
+  "description": "HTML5/4 异步上传",
   "scripts": {
     "live": "browser-sync start --config bs-config.js",
     "test": "node ./node_modules/.bin/karma start karma.conf.js --single-run",

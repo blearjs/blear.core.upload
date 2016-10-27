@@ -10,7 +10,6 @@
 var selector = require('blear.core.selector');
 var attribute = require('blear.core.attribute');
 var modification = require('blear.core.modification');
-var event = require('blear.core.event');
 var ajax = require('blear.core.ajax');
 var typeis = require('blear.utils.typeis');
 var object = require('blear.utils.object');
@@ -153,7 +152,10 @@ Uploader.prototype = {
             method: options.method,
             enctype: 'multipart/form-data',
             target: the.iframeName,
-            action: options.url
+            action: options.url,
+            style: {
+                display: 'none'
+            }
         });
 
         var body = options.body;
@@ -167,11 +169,19 @@ Uploader.prototype = {
             modification.insert(inputEl, formEl);
         });
 
-        var fileEl = the.fileEl;
-        // form 插入到 file 后面
-        modification.insert(formEl, fileEl, 'afterend');
+        var originFileEl = the.fileEl;
+
+        // 创建一个克隆 file
+        var cloneFileEl = the.cloneEl = originFileEl.cloneNode();
+
+        // 将克隆 file 插入到 file 后面
+        modification.insert(cloneFileEl, originFileEl, 'afterend');
+
+        // form 插入到文档中
+        modification.insert(formEl);
+
         // file 插入到 form 里
-        modification.insert(fileEl, formEl);
+        modification.insert(originFileEl, formEl);
     },
 
 
@@ -185,7 +195,10 @@ Uploader.prototype = {
         the.createIframe();
         the.createForm();
 
-        event.once(the.iframeEl, 'load', function () {
+        the.iframeEl.onload = function () {
+            alert('iframe upload');
+            the.iframeEl.onload = null;
+
             var response;
             try {
                 response = this.contentWindow.document.body.innerHTML;
@@ -203,12 +216,11 @@ Uploader.prototype = {
                 options.onError(e);
                 options.onComplete(e);
             }
-        });
+        };
 
         var submitEl = the.submitEl = modification.create('input', {
             type: 'submit'
         });
-        attribute.hide(submitEl);
         modification.insert(submitEl, the.formEl);
         submitEl.click();
     },
@@ -266,13 +278,18 @@ Uploader.prototype = {
     destroy: function () {
         var the = this;
 
-        event.un(the.fileEl, 'change', the.onChange);
-
         if (!the.standard) {
-            // fileEl 移到原位
-            modification.insert(the.fileEl, the.formEl, 'afterend');
+            try {
+                // 尝试插入到原位置，忽略错误
+                modification.insert(the.fileEl, the.cloneEl, 'afterend');
+                modification.remove(the.cloneEl);
+            } catch (err) {
+                // ignore
+            }
+
             // 删除 form
             modification.remove(the.formEl);
+
             // 删除 iframe
             modification.remove(the.iframeEl);
         }
