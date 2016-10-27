@@ -190,6 +190,13 @@ Uploader.prototype = {
             try {
                 response = this.contentWindow.document.body.innerHTML;
                 response = json.safeParse(response);
+
+                if (response === null) {
+                    var e = new Error('上传响应数据解析失败');
+                    options.onError(e);
+                    return options.onComplete(e);
+                }
+
                 options.onSuccess(response);
                 options.onComplete(null, response);
             } catch (e) {

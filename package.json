@@ -1,6 +1,6 @@
 {
   "name": "blear.core.upload",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "HTML5/4 AJAX 上传",
   "scripts": {
     "live": "browser-sync start --config bs-config.js",
