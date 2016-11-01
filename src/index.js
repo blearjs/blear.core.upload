@@ -196,7 +196,6 @@ Uploader.prototype = {
         the.createForm();
 
         the.iframeEl.onload = function () {
-            alert('iframe upload');
             the.iframeEl.onload = null;
 
             var response;
