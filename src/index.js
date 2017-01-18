@@ -75,6 +75,12 @@ var defaults = {
     fileName: 'file',
 
     /**
+     * 回调上下文
+     * @type *
+     */
+    context: null,
+
+    /**
      * 数据格式
      * @type String
      */
@@ -250,6 +256,7 @@ Uploader.prototype = {
             method: options.method,
             crossDomain: options.crossDomain,
             body: form,
+            context: options.context,
             dataType: options.dataType,
             onProgress: options.onProgress,
             onSuccess: options.onSuccess,
