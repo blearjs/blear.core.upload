@@ -46,7 +46,7 @@ var defaults = {
      * 是否跨域，默认false
      * @type boolean
      */
-    cross: false,
+    crossDomain: false,
 
     /**
      * 提交方法
@@ -247,7 +247,7 @@ Uploader.prototype = {
         ajax({
             url: options.url,
             method: options.method,
-            crossDomain: options.cross,
+            crossDomain: options.crossDomain,
             body: form,
             dataType: options.dataType,
             onProgress: options.onProgress,

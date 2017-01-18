@@ -32,7 +32,7 @@ describe('测试文件', function () {
             submitEl: send,
             dataType: 'text',
             body: {name: 'zcl'},
-            cross: true,
+            crossDomain: true,
             url: '/upload/ajax/',
             onSuccess: function (data) {
                 expect(data).toEqual('success');
