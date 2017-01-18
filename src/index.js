@@ -110,7 +110,7 @@ function Uploader(options) {
     options = the.options = object.assign(true, {}, defaults, options);
     the.fileEl = selector.query(options.fileEl)[0];
     the.iframeName = namespace + iframeCount++;
-    the.standard = 'FormData' in window && !options.iframe;
+    the.standard = 'FormData' in win;
 
     var oldComplete = options.onComplete;
     options.onComplete = function () {
